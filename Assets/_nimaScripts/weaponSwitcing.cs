@@ -64,7 +64,7 @@ public class weaponSwitcing : MonoBehaviour
         {
             
             gameObject.transform.GetChild(selectedWeapon).GetComponent<Animator>().SetBool("isReloading", false);
-            gameObject.transform.GetChild(selectedWeapon).GetComponent<weaponScript>().isReloading = false;
+            //gameObject.transform.GetChild(selectedWeapon).GetComponent<weaponScript>().isReloading = false;
             SelectWeapon();
             
         }
@@ -86,6 +86,6 @@ public class weaponSwitcing : MonoBehaviour
             i++;
         }
         weaponName.text = transform.GetChild(selectedWeapon).name;
-        gameObject.GetComponentInParent<playerMovement>().weapon =  transform.GetChild(selectedWeapon).gameObject;
+        //gameObject.GetComponentInParent<playerMovement>().weapon =  transform.GetChild(selectedWeapon).gameObject;
     }
 }
