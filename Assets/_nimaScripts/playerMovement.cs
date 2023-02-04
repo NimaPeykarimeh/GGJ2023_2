@@ -6,7 +6,7 @@ public class playerMovement : MonoBehaviour
 {
     private Rigidbody2D rb2;
     private float movingDirX;
-    [SerializeField] private float movementSpeed;
+    [SerializeField] public float movementSpeed;
     [SerializeField] private bool isGrounded;
     private bool _jump;
     [SerializeField] int jumpCounts;
@@ -57,7 +57,9 @@ public class playerMovement : MonoBehaviour
 
     void Update()
     {
+
         movingDirX = Input.GetAxis("Horizontal");
+
         if (Input.GetButtonDown("Jump") && jumpsLeft > 0)
         {
             _jump = true;

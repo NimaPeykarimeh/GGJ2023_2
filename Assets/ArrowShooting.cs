@@ -14,12 +14,15 @@ public class ArrowShooting : MonoBehaviour
     bool attackFlag = true;
     Vector2 startDragPos;
     Vector2 endDragPos;
+    public Vector2 _velocity;
 
     // Start is called before the first frame update
     void Start()
     {
         lr = GetComponent<LineRenderer>();
         rb = GetComponent<Rigidbody2D>();
+
+        power = transform.parent.gameObject.GetComponent<aimBow>().bowPower[transform.parent.gameObject.GetComponent<aimBow>().bowLevel - 1];
     }
 
     // Update is called once per frame
@@ -39,7 +42,7 @@ public class ArrowShooting : MonoBehaviour
 
                 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-                Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
+                _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
 
                 Vector2[] trajectory = Plot(rb, (Vector2)transform.position, _velocity, 500);
 
@@ -64,17 +67,19 @@ public class ArrowShooting : MonoBehaviour
                 if (Vector2.Distance(endDragPos, startDragPos) > cancelOffset)
                 {
 
+                    transform.parent.GetComponent<aimBow>().AddNewArrow();
+                    transform.parent = null;
                     Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
                     rb.bodyType = RigidbodyType2D.Dynamic;
                     rb.velocity = _velocity;
-                    Destroy(gameObject, 15f);
+                    Destroy(gameObject, 3f);
                     //this.enabled = false;
+                    attackFlag = false;
                 }
 
                 GetComponent<LineRenderer>().enabled = false;
                 //GetComponent<ArrowShooting>().enabled = false;
-                attackFlag = false;
             }
             
         }
@@ -82,13 +87,13 @@ public class ArrowShooting : MonoBehaviour
         {   if (rb.velocity.magnitude > Vector2.zero.magnitude)
             {
                 float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
-                rb.rotation = angle - 90;
+                rb.rotation = angle;
             }
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(!attackFlag)
+        if(!attackFlag && !collision.gameObject.CompareTag("Arrow"))
         {
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
