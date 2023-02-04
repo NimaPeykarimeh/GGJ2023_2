@@ -10,8 +10,9 @@ public class paralax : MonoBehaviour
 
     void Start()
     {
+        _camera = GameObject.FindGameObjectWithTag("MainCamera");
         startPos = transform.position.x;
-        lenght = GetComponent<SpriteRenderer>().bounds.size.x;
+        //lenght = GetComponent<SpriteRenderer>().bounds.size.x;
     }
 
     private void FixedUpdate()
@@ -20,7 +21,7 @@ public class paralax : MonoBehaviour
         float dist = _camera.transform.position.x * parallaxEffect;
 
         transform.position = new Vector3(startPos + dist, transform.position.y, transform.position.z);
-
+        /*
         if (temp > startPos + lenght *2 + 5)
         {
             startPos += lenght *2;
@@ -29,5 +30,6 @@ public class paralax : MonoBehaviour
         {
             startPos -= lenght *2 ;
         }
+        */
     }
 }
