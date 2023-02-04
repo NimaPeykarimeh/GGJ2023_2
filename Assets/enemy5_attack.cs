@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class enemy4_attack : MonoBehaviour
+public class enemy5_attack : MonoBehaviour
 {
     public float AttackSpeed;
     public Transform targetPoint;
@@ -15,6 +15,8 @@ public class enemy4_attack : MonoBehaviour
 
     bool attackActive = false;
     bool readyFlag = false;
+    bool reoladFlag = false;
+    bool stopAttackFlag = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,27 +26,38 @@ public class enemy4_attack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(attackActive)
+        if (attackActive)
         {
             timer += Time.deltaTime;
-            if(timer >= 0.85 && !readyFlag)
+            if (timer >= 0.85 && !readyFlag)
             {
                 startAttackPos = transform.position;
                 endAttackPos = targetPoint.position;
 
                 readyFlag = true;
             }
-            if(timer >= 1)
+            if (timer >= 1)
             {
                 timer = 0;
                 attackActive = false;
 
-                rb.bodyType = RigidbodyType2D.Dynamic;
-                rb.velocity = (endAttackPos - startAttackPos) * AttackSpeed;
-
-                Destroy(gameObject, 5f);
-            }
+                Vector2 _velocity = (endAttackPos - startAttackPos) * AttackSpeed;
+                _velocity.y += 1;
                 
+                rb.velocity = _velocity;
+
+                reoladFlag = true;
+                readyFlag = false;
+            }
+        }
+        if(reoladFlag)
+        {
+            timer += Time.deltaTime;
+            if (timer >= 3f)
+            {
+                if (!stopAttackFlag)
+                    attackActive = true;
+            }
         }
     }
 
@@ -52,7 +65,17 @@ public class enemy4_attack : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            stopAttackFlag = false;
             attackActive = true;
+        }
+    }
+
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            stopAttackFlag = true;
         }
     }
 }
