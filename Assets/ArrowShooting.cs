@@ -20,6 +20,9 @@ public class ArrowShooting : MonoBehaviour
     [SerializeField] float _multi;
     [SerializeField] Vector2 _cameraXoffsetRange;
     [SerializeField] Vector2 _cameraYoffsetRange;
+    [SerializeField] AudioClip shootingSound;
+    [SerializeField] AudioClip arrowHit;
+    AudioSource _audioSource;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +30,8 @@ public class ArrowShooting : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         _camera = GameObject.FindGameObjectWithTag("MainCamera");
         power = transform.parent.gameObject.GetComponent<aimBow>().bowPower[transform.parent.gameObject.GetComponent<aimBow>().bowLevel - 1];
+        _audioSource= GetComponent<AudioSource>();
+        _audioSource.clip= shootingSound;
     }
 
     // Update is called once per frame
@@ -80,6 +85,7 @@ public class ArrowShooting : MonoBehaviour
             {
                 if (Vector2.Distance(endDragPos, startDragPos) > cancelOffset)
                 {
+                    _audioSource.Play();
                     transform.GetChild(0).gameObject.SetActive(true);
                     transform.parent.GetComponent<aimBow>().AddNewArrow();
                     transform.parent = null;
@@ -109,6 +115,8 @@ public class ArrowShooting : MonoBehaviour
     {
         if(!attackFlag && !collision.gameObject.CompareTag("Arrow"))
         {
+            _audioSource.clip = arrowHit;
+            _audioSource.Play();
             transform.GetChild(0).gameObject.SetActive(false);
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.constraints = RigidbodyConstraints2D.FreezeAll;

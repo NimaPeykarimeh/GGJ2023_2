@@ -4,22 +4,29 @@ using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
-    private Rigidbody2D rb2;
-    private float movingDirX;
+
+    [Header("Movement Setting")]
     [SerializeField] public float movementSpeed;
-    [SerializeField] private bool isGrounded;
-    private bool _jump;
     [SerializeField] int jumpCounts;
     [SerializeField] private float jumpForce;
-    [SerializeField] int jumpsLeft;
-    [SerializeField] Color _jumpColor;
     [SerializeField] float glideSpeed;
     [SerializeField] bool isGlideActive;
+
+    [Header("Other")]
+    [SerializeField] private bool isGrounded;
+    [SerializeField] int jumpsLeft;
+    [SerializeField] Color _jumpColor;
+    [SerializeField] AudioClip onAirJumpSound;
+    private Rigidbody2D rb2;
+    private float movingDirX;
+    private bool _jump;
+    AudioSource _audioSource;
     void Start()
     {
         rb2= GetComponent<Rigidbody2D>();
         jumpsLeft = jumpCounts;
         isGrounded = true;
+        _audioSource= GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -56,6 +63,8 @@ public class playerMovement : MonoBehaviour
             if (!isGrounded)
             {
                 transform.Find("jumpEffect").GetComponent<ParticleSystem>().Play();
+                _audioSource.clip = onAirJumpSound;
+                _audioSource.Play();
             }
         }
     }

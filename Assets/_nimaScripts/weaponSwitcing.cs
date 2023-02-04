@@ -4,7 +4,7 @@ public class weaponSwitcing : MonoBehaviour
 {
 
     public int selectedWeapon = 0;
-    [SerializeField] Text weaponName;
+    [SerializeField] string weaponName;
 
     private void Start()
     {
@@ -63,7 +63,7 @@ public class weaponSwitcing : MonoBehaviour
         if (previousSelectedWeapon != selectedWeapon)
         {
             
-            gameObject.transform.GetChild(selectedWeapon).GetComponent<Animator>().SetBool("isReloading", false);
+            //gameObject.transform.GetChild(selectedWeapon).GetComponent<Animator>().SetBool("isReloading", false);
             //gameObject.transform.GetChild(selectedWeapon).GetComponent<weaponScript>().isReloading = false;
             SelectWeapon();
             
@@ -85,7 +85,8 @@ public class weaponSwitcing : MonoBehaviour
             }
             i++;
         }
-        weaponName.text = transform.GetChild(selectedWeapon).name;
+        weaponName = transform.GetChild(selectedWeapon).gameObject.name;
+        //weaponName.text = transform.GetChild(selectedWeapon).name;
         //gameObject.GetComponentInParent<playerMovement>().weapon =  transform.GetChild(selectedWeapon).gameObject;
     }
 }
