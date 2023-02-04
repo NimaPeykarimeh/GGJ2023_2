@@ -87,7 +87,7 @@ public class ArrowShooting : MonoBehaviour
                     Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
                     rb.bodyType = RigidbodyType2D.Dynamic;
                     rb.velocity = _velocity;
-                    Destroy(gameObject, 3f);
+                    Destroy(gameObject, 15f);
                     //this.enabled = false;
                     attackFlag = false;
                 }
