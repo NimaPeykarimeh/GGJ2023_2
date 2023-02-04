@@ -63,15 +63,15 @@ public class ArrowShooting : MonoBehaviour
 
                 Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
-
+                rb.bodyType = RigidbodyType2D.Dynamic;
                 rb.velocity = _velocity;
-                
+                Destroy(gameObject, 5f);
+                this.enabled = false;
             }
 
             GetComponent<LineRenderer>().enabled = false;
             //GetComponent<ArrowShooting>().enabled = false;
-            Destroy(gameObject, 5f);
-            this.enabled = false;
+            
         }
     }
 
