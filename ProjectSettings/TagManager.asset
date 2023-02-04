@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Ground
   - Arrow
+  - informationText
+  - infoPanel
+  - dialogPanel
+  - dialogText
   layers:
   - Default
   - TransparentFX
