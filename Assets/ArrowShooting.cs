@@ -6,10 +6,13 @@ public class ArrowShooting : MonoBehaviour
 {
     public float power;
     public int AimDistance;
+    public int cancelOffset;
+
     LineRenderer lr;
     Rigidbody2D rb;
 
     Vector2 startDragPos;
+    Vector2 endDragPos;
 
     // Start is called before the first frame update
     void Start()
@@ -23,14 +26,15 @@ public class ArrowShooting : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            //startDragPos = transform.position;
+            GetComponent<LineRenderer>().enabled = true;
+            
             startDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
         if (Input.GetMouseButton(0))
         {
             
-            Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
 
@@ -45,14 +49,29 @@ public class ArrowShooting : MonoBehaviour
             }
 
             lr.SetPositions(positions);
+
+            if (Vector2.Distance(endDragPos, startDragPos) < cancelOffset)
+                GetComponent<LineRenderer>().SetColors(Color.grey, Color.grey);
+            else
+                GetComponent<LineRenderer>().SetColors(Color.white, Color.white);
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
+            if (Vector2.Distance(endDragPos, startDragPos) > cancelOffset)
+            {
 
-            rb.velocity = _velocity;
+                Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
+
+                rb.velocity = _velocity;
+                
+            }
+
+            GetComponent<LineRenderer>().enabled = false;
+            //GetComponent<ArrowShooting>().enabled = false;
+            Destroy(gameObject, 5f);
+            this.enabled = false;
         }
     }
 
