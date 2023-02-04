@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraScripts : MonoBehaviour
 {
     [SerializeField] GameObject player;
-    [SerializeField] Vector3 cameraOffset;
+    public Vector3 cameraOffset;
     [SerializeField] Vector3 _cameraOffset;
     [SerializeField] Transform roomPos;
     [SerializeField] GameObject cameraHolder;
@@ -13,9 +13,11 @@ public class CameraScripts : MonoBehaviour
     [SerializeField] bool isFollowing;
     [SerializeField] float cameraSizeInRoom;
     [SerializeField] float cameraSizeDefault;
-    [SerializeField] float maxOffsetX;
-    [SerializeField] float maxOffsetY;
-
+    public float maxOffsetX;
+    public float maxOffsetY;
+    public bool isShooting;
+    private Vector3 mousePosition;
+    public float multi;
     private void Start()
     {
         cameraHolder = transform.parent.gameObject;
@@ -23,19 +25,23 @@ public class CameraScripts : MonoBehaviour
     }
     private void Update()
     {
-        cameraOffset.x = (Input.mousePosition.x - (Screen.width / 2)) / (Screen.width / 2) * maxOffsetX;
-        cameraOffset.y = (Input.mousePosition.y - (Screen.height / 2)) / (Screen.height / 2) * maxOffsetY + 2;
-        cameraOffset.x = Mathf.Clamp(cameraOffset.x, -8.5f, 8.5f);
-        cameraOffset.y = Mathf.Clamp(cameraOffset.y, 0, 4);
+        if (!isShooting)
+        {
+            mousePosition = gameObject.GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition);
+            cameraOffset = (mousePosition - player.transform.position) / multi;
+
+            /*
+            cameraOffset.x = (Input.mousePosition.x - (Screen.width / 2)) / (Screen.width / 2) * maxOffsetX;
+            cameraOffset.y = (Input.mousePosition.y - (Screen.height / 2)) / (Screen.height / 2) * maxOffsetY + 2;
+            */
+            cameraOffset.x = Mathf.Clamp(cameraOffset.x, -8.5f, 8.5f);
+            cameraOffset.y = Mathf.Clamp(cameraOffset.y, 0, 4);
+
+        }
+        
 
     }
 
-    private void LateUpdate()
-    {
-        
-
-        
-    }
 
     private void FixedUpdate()
     {

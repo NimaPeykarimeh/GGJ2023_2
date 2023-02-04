@@ -52,6 +52,11 @@ public class playerMovement : MonoBehaviour
             rb2.AddForce(transform.up * jumpForce,ForceMode2D.Impulse);
             _jump = false;
             jumpsLeft --;
+
+            if (!isGrounded)
+            {
+                transform.Find("jumpEffect").GetComponent<ParticleSystem>().Play();
+            }
         }
     }
 

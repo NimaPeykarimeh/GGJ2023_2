@@ -15,13 +15,17 @@ public class ArrowShooting : MonoBehaviour
     Vector2 startDragPos;
     Vector2 endDragPos;
     public Vector2 _velocity;
-
+    [SerializeField] GameObject _camera;
+    [SerializeField] float multi;
+    [SerializeField] float _multi;
+    [SerializeField] Vector2 _cameraXoffsetRange;
+    [SerializeField] Vector2 _cameraYoffsetRange;
     // Start is called before the first frame update
     void Start()
     {
         lr = GetComponent<LineRenderer>();
         rb = GetComponent<Rigidbody2D>();
-
+        _camera = GameObject.FindGameObjectWithTag("MainCamera");
         power = transform.parent.gameObject.GetComponent<aimBow>().bowPower[transform.parent.gameObject.GetComponent<aimBow>().bowLevel - 1];
     }
 
@@ -33,18 +37,24 @@ public class ArrowShooting : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 GetComponent<LineRenderer>().enabled = true;
-
-                startDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                _camera.GetComponent<CameraScripts>().isShooting = true;
+                startDragPos = Input.mousePosition/_multi;
             }
 
             if (Input.GetMouseButton(0))
             {
 
-                endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                
+
+
+                endDragPos = Input.mousePosition / _multi;
 
                 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
-
+                
                 Vector2[] trajectory = Plot(rb, (Vector2)transform.position, _velocity, 500);
+
+                
+
 
                 lr.positionCount = trajectory.Length;
 
@@ -53,6 +63,10 @@ public class ArrowShooting : MonoBehaviour
                 {
                     positions[i] = trajectory[i];
                 }
+
+                _camera.GetComponent<CameraScripts>().cameraOffset = (positions[positions.Length -1] - positions[0]) / multi;
+                _camera.GetComponent<CameraScripts>().cameraOffset.x = Mathf.Clamp(_camera.GetComponent<CameraScripts>().cameraOffset.x, _cameraXoffsetRange[0], _cameraXoffsetRange[1]);
+                _camera.GetComponent<CameraScripts>().cameraOffset.y = Mathf.Clamp(_camera.GetComponent<CameraScripts>().cameraOffset.y, _cameraYoffsetRange[0], _cameraYoffsetRange[1]);
 
                 lr.SetPositions(positions);
 
@@ -66,10 +80,10 @@ public class ArrowShooting : MonoBehaviour
             {
                 if (Vector2.Distance(endDragPos, startDragPos) > cancelOffset)
                 {
-
+                    transform.GetChild(0).gameObject.SetActive(true);
                     transform.parent.GetComponent<aimBow>().AddNewArrow();
                     transform.parent = null;
-                    Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 endDragPos = Input.mousePosition/ _multi;
                     Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
                     rb.bodyType = RigidbodyType2D.Dynamic;
                     rb.velocity = _velocity;
@@ -77,7 +91,7 @@ public class ArrowShooting : MonoBehaviour
                     //this.enabled = false;
                     attackFlag = false;
                 }
-
+                _camera.GetComponent<CameraScripts>().isShooting = false;
                 GetComponent<LineRenderer>().enabled = false;
                 //GetComponent<ArrowShooting>().enabled = false;
             }
@@ -95,6 +109,7 @@ public class ArrowShooting : MonoBehaviour
     {
         if(!attackFlag && !collision.gameObject.CompareTag("Arrow"))
         {
+            transform.GetChild(0).gameObject.SetActive(false);
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
         }
