@@ -10,6 +10,7 @@ TagManager:
   - infoPanel
   - dialogPanel
   - dialogText
+  - weaponHolder
   layers:
   - Default
   - TransparentFX
@@ -49,4 +50,10 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 1615824077
+    locked: 0
+  - name: weapon
+    uniqueID: 3890239619
     locked: 0
