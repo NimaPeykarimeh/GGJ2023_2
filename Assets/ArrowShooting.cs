@@ -23,9 +23,13 @@ public class ArrowShooting : MonoBehaviour
     [SerializeField] AudioClip shootingSound;
     [SerializeField] AudioClip arrowHit;
     AudioSource _audioSource;
+    GameObject _player;
+    float _playerSpeedHolder;
     // Start is called before the first frame update
     void Start()
     {
+        _player = GameObject.FindGameObjectWithTag("Player");
+        _playerSpeedHolder = _player.GetComponent<playerMovement>().movementSpeed;
         lr = GetComponent<LineRenderer>();
         rb = GetComponent<Rigidbody2D>();
         _camera = GameObject.FindGameObjectWithTag("MainCamera");
@@ -41,6 +45,9 @@ public class ArrowShooting : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                
+                _player.GetComponent<playerMovement>().movementSpeed = 0;
+                _player.GetComponent<Animator>().SetBool("isAiming", true);
                 GetComponent<LineRenderer>().enabled = true;
                 _camera.GetComponent<CameraScripts>().isShooting = true;
                 startDragPos = Input.mousePosition/_multi;
@@ -49,7 +56,14 @@ public class ArrowShooting : MonoBehaviour
             if (Input.GetMouseButton(0))
             {
 
-                
+                if (_player.transform.localScale.x < 0)
+                {
+                    transform.parent.GetChild(0).gameObject.transform.localScale = new Vector3(-1, 1, 1);
+                }
+                else
+                {
+                    transform.parent.GetChild(0).gameObject.transform.localScale = new Vector3(1, 1, 1);
+                }
 
 
                 endDragPos = Input.mousePosition / _multi;
@@ -83,6 +97,8 @@ public class ArrowShooting : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
+                _player.GetComponent<playerMovement>().movementSpeed = _playerSpeedHolder;
+                _player.GetComponent<Animator>().SetBool("isAiming", false);
                 if (Vector2.Distance(endDragPos, startDragPos) > cancelOffset)
                 {
                     _audioSource.Play();
@@ -107,7 +123,7 @@ public class ArrowShooting : MonoBehaviour
         {   if (rb.velocity.magnitude > Vector2.zero.magnitude)
             {
                 float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
-                rb.rotation = angle;
+                rb.rotation = angle -90;
             }
         }
     }

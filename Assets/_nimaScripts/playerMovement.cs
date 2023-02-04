@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class playerMovement : MonoBehaviour
@@ -21,12 +23,14 @@ public class playerMovement : MonoBehaviour
     private float movingDirX;
     private bool _jump;
     AudioSource _audioSource;
+    Animator animator;
     void Start()
     {
         rb2= GetComponent<Rigidbody2D>();
         jumpsLeft = jumpCounts;
         isGrounded = true;
         _audioSource= GetComponent<AudioSource>();
+        animator= GetComponent<Animator>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -40,14 +44,7 @@ public class playerMovement : MonoBehaviour
         
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-            GetComponent<SpriteRenderer>().color = _jumpColor;
-        }
-    }
+
 
 
     private void FixedUpdate()
@@ -55,6 +52,7 @@ public class playerMovement : MonoBehaviour
         rb2.transform.position += new Vector3(movingDirX, 0, 0) * movementSpeed * Time.fixedDeltaTime;
         if (_jump)
         {
+            
             rb2.velocity = new Vector2(rb2.velocity.x, 0f);
             rb2.AddForce(transform.up * jumpForce,ForceMode2D.Impulse);
             _jump = false;
@@ -66,6 +64,7 @@ public class playerMovement : MonoBehaviour
                 _audioSource.clip = onAirJumpSound;
                 _audioSource.Play();
             }
+            isGrounded = false;
         }
     }
 
@@ -73,7 +72,19 @@ public class playerMovement : MonoBehaviour
     {
 
         movingDirX = Input.GetAxis("Horizontal");
+        
+        animator.SetFloat("moveSpeed",Mathf.Abs(movingDirX));
 
+        animator.SetBool("isGrounded", isGrounded);
+        if (movingDirX > 0)
+        {
+            transform.localScale = new Vector3(1,1,1);
+
+        }
+        if (movingDirX < 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
         if (Input.GetButtonDown("Jump") && jumpsLeft > 0)
         {
             _jump = true;

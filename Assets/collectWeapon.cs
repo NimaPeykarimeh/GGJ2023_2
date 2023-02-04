@@ -10,7 +10,7 @@ public class collectWeapon : MonoBehaviour
     [SerializeField] bool isCollectible;
     [SerializeField] string textToShow;
     [SerializeField] string textInPanel;
-    TextMeshProUGUI infoText;
+    [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] GameObject infoPanel;
     float textTimer;
     [SerializeField] float writingSpeed;
@@ -66,14 +66,14 @@ public class collectWeapon : MonoBehaviour
         if (isCollectible && Input.GetKeyDown(KeyCode.R))
         {
             
-            GameObject _addedPrefab = Instantiate(weaponPrefab, _player.transform.Find("weapons").transform.position, transform.rotation);
-            _addedPrefab.transform.parent = _player.transform.Find("weapons");
-
-            for (int i = 0; i < _player.transform.Find("weapons").childCount; i++)
+            GameObject _addedPrefab = Instantiate(weaponPrefab, _player.transform.Find("el").transform.Find("weapons").transform.position, transform.rotation);
+            _addedPrefab.transform.parent = GameObject.FindGameObjectWithTag("weaponHolder").transform;
+            
+            for (int i = 0; i < GameObject.FindGameObjectWithTag("weaponHolder").transform.childCount; i++)
             {
-                if (_player.transform.Find("weapons").GetChild(i).gameObject.activeSelf)
+                if (GameObject.FindGameObjectWithTag("weaponHolder").transform.GetChild(i).gameObject.activeSelf)
                 {
-                    _player.transform.Find("weapons").GetChild(i).gameObject.SetActive(false);
+                    GameObject.FindGameObjectWithTag("weaponHolder").transform.GetChild(i).gameObject.SetActive(false);
                 }
             }
 
