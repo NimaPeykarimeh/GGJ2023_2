@@ -11,6 +11,7 @@ public class ArrowShooting : MonoBehaviour
     LineRenderer lr;
     Rigidbody2D rb;
 
+    bool attackFlag = true;
     Vector2 startDragPos;
     Vector2 endDragPos;
 
@@ -24,54 +25,73 @@ public class ArrowShooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (attackFlag)
         {
-            GetComponent<LineRenderer>().enabled = true;
-            
-            startDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            
-            endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
-
-            Vector2[] trajectory = Plot(rb, (Vector2)transform.position, _velocity, 500);
-
-            lr.positionCount = trajectory.Length;
-
-            Vector3[] positions = new Vector3[trajectory.Length];
-            for(int i = 0; i < trajectory.Length; ++i)
+            if (Input.GetMouseButtonDown(0))
             {
-                positions[i] = trajectory[i];
+                GetComponent<LineRenderer>().enabled = true;
+
+                startDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             }
 
-            lr.SetPositions(positions);
-
-            if (Vector2.Distance(endDragPos, startDragPos) < cancelOffset)
-                GetComponent<LineRenderer>().SetColors(Color.grey, Color.grey);
-            else
-                GetComponent<LineRenderer>().SetColors(Color.white, Color.white);
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (Vector2.Distance(endDragPos, startDragPos) > cancelOffset)
+            if (Input.GetMouseButton(0))
             {
 
-                Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
                 Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
-                rb.bodyType = RigidbodyType2D.Dynamic;
-                rb.velocity = _velocity;
-                Destroy(gameObject, 5f);
-                this.enabled = false;
+
+                Vector2[] trajectory = Plot(rb, (Vector2)transform.position, _velocity, 500);
+
+                lr.positionCount = trajectory.Length;
+
+                Vector3[] positions = new Vector3[trajectory.Length];
+                for (int i = 0; i < trajectory.Length; ++i)
+                {
+                    positions[i] = trajectory[i];
+                }
+
+                lr.SetPositions(positions);
+
+                if (Vector2.Distance(endDragPos, startDragPos) < cancelOffset)
+                    GetComponent<LineRenderer>().SetColors(Color.grey, Color.grey);
+                else
+                    GetComponent<LineRenderer>().SetColors(Color.white, Color.white);
             }
 
-            GetComponent<LineRenderer>().enabled = false;
-            //GetComponent<ArrowShooting>().enabled = false;
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (Vector2.Distance(endDragPos, startDragPos) > cancelOffset)
+                {
+
+                    Vector2 endDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 _velocity = Vector2.ClampMagnitude((endDragPos - startDragPos), AimDistance) * -power;
+                    rb.bodyType = RigidbodyType2D.Dynamic;
+                    rb.velocity = _velocity;
+                    Destroy(gameObject, 15f);
+                    //this.enabled = false;
+                }
+
+                GetComponent<LineRenderer>().enabled = false;
+                //GetComponent<ArrowShooting>().enabled = false;
+                attackFlag = false;
+            }
             
+        }
+        else
+        {   if (rb.velocity.magnitude > Vector2.zero.magnitude)
+            {
+                float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+                rb.rotation = angle - 90;
+            }
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(!attackFlag)
+        {
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
         }
     }
 
