@@ -14,9 +14,16 @@ public class enemy1_attack : MonoBehaviour
     bool canAttackFlag = true;
     char rotationDirection;
     Transform targetPoint;
+
+    GameObject _camera;
+    [SerializeField] float _lenght;
+    [SerializeField] float _power;
+    [SerializeField] float _rotation;
+
     // Start is called before the first frame update
     void Start()
     {
+        _camera = GameObject.FindGameObjectWithTag("MainCamera");
         playerPos = GameObject.FindGameObjectWithTag("Player").transform;
         rigidbody = GetComponent<Rigidbody2D>();
         startPos = transform.position;
@@ -41,6 +48,7 @@ public class enemy1_attack : MonoBehaviour
                 
                 rigidbody.bodyType = RigidbodyType2D.Dynamic;
                 rigidbody.AddForce(targetVector * jumpPower, ForceMode2D.Impulse);
+                _camera.GetComponent<screenShake>().StartShake(_lenght, _power, _rotation);
                 canAttackFlag = false;
             }
         }
@@ -69,11 +77,11 @@ public class enemy1_attack : MonoBehaviour
         }
         if (rigidbody.velocity.y < 0)
         {
-            gameObject.GetComponent<SpriteRenderer>().sortingOrder = -1;
+            gameObject.GetComponent<SpriteRenderer>().sortingOrder = 0;
         }
         else
         {
-            gameObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            gameObject.GetComponent<SpriteRenderer>().sortingOrder = 2;
         }
         if (canAttackFlag)
         {

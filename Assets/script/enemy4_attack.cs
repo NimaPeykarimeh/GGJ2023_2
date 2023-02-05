@@ -16,11 +16,15 @@ public class enemy4_attack : MonoBehaviour
     bool attackActive = false;
     bool readyFlag = false;
     [SerializeField] GameObject expoParticle;
-    // Start is called before the first frame update
+    GameObject _camera;
+    [SerializeField] float _lenght;
+    [SerializeField] float _power; 
+    [SerializeField] float _rotation;
+    // Start is calledbefore the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
+        _camera = GameObject.FindGameObjectWithTag("MainCamera");
 
     }
 
@@ -67,6 +71,7 @@ public class enemy4_attack : MonoBehaviour
             expoParticle.GetComponent<ParticleSystem>().Play();
             SpriteRenderer _sprtr = GetComponent<SpriteRenderer>();
             _sprtr.enabled = false;
+            _camera.GetComponent<screenShake>().StartShake(_lenght,_power,_rotation);
             Destroy(gameObject,0.3f);
         }
     }
