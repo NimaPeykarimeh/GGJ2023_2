@@ -49,13 +49,16 @@ TagManager:
   - name: background
     uniqueID: 1038568593
     locked: 0
+  - name: BackBuilding
+    uniqueID: 306913171
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: ground
-    uniqueID: 3605612125
+  - name: backWall
+    uniqueID: 3737177529
     locked: 0
-  - name: Player
+  - name: inMainRoad
     uniqueID: 1615824077
     locked: 0
   - name: enemy
@@ -63,4 +66,7 @@ TagManager:
     locked: 0
   - name: weapon
     uniqueID: 3890239619
+    locked: 0
+  - name: frontObject
+    uniqueID: 3134926409
     locked: 0
